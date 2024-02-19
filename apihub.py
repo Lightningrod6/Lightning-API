@@ -9,14 +9,16 @@ try:
     import dotenv
 except ModuleNotFoundError:
     print("This module was not found. Go to your console or terminal and do 'pip install dotenv'. If that doesn't work, do 'pip3 install dotenv', then run the python script again.")
+script_dir = os.path.abspath(os.path.dirname(__file__))
 
-env_file = ".env"
-load_env_file = dotenv.load_dotenv()
-
+# Construct the absolute path to the .env file
+env_file = os.path.join(script_dir, '.env')
+dotenv.load_dotenv(env_file)
 if not os.path.exists(env_file):
-    print("The .env file doesn't exists, creating a new one")
+    print("The .env file doesn't exist, creating a new one...")
     with open(env_file, "w") as file:
         file.write("FINNHUB_API_KEY='Your Finnhub API key'\nALPHAVANTAGE_API_KEY='Your Alpha Vantage API key'")
+        print("Created the .env file. \nThis file may be hidden so make sure your computer can see hidden files.")
 else:
     def LightningStockAPI():
         finnhubAPIKey = os.getenv('FINNHUB_API_KEY')
@@ -57,7 +59,7 @@ else:
                         print(f"Price Change: ${price_change}")
                         print(f"Todays High Price: ${high_price_today}")
                         print(f"Todays Low Price: ${low_price_today}")
-                        
+                            
                 else:
                     print("Failed to fetch stock")
     LightningStockAPI()        
