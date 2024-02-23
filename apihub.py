@@ -112,13 +112,11 @@ try:
                             seven_day_forecast = seven_day_request.json()
                             
                             for day in seven_day_forecast['list']:
-        # Convert Unix timestamp to datetime object
+        
                                 dt_object = datetime.fromtimestamp(day['dt'])
                                 
-                                # Get the day of the week (Monday is 0, Sunday is 6)
                                 day_of_week = dt_object.weekday()
                                 
-                                # Convert numeric representation to day name
                                 day_name = calendar.day_name[day_of_week]
                                 
                                 temp_min = round(day['temp']['min'])    
@@ -139,11 +137,10 @@ try:
 
                 user_ask = input("Ask the ai something: ")
                 user_input = model.generate_content(user_ask)
-
-                # Improved check for specific keywords in user_ask
+                
                 keywords = ["code", "program", "script"]
                 if any(keyword in user_ask for keyword in keywords) or not user_ask.strip():
-                    # Unique and cleaned up extensions list
+                    
                     extensions = ['py', 'js', 'html', 'css', 'java', 'php', 'cs', 'cpp', 'c', 'ts', 'swift', 'go', 'rs', 'kt', 'json', 'xml', 'sql', 'rb', 'sh', 'bat', 'pl', 'lua', 'r', 'dart', 'pas', 'h', 'hpp', 'scala', 'yaml']
                     extension = user_ask.split()
                     getting_the_thing = [exten.lower() for exten in extension if exten.lower() in extensions]
