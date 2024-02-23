@@ -29,7 +29,7 @@ try:
     else:
         print("Welcome to the Lightning API Python script. ")
         sleep(2)
-        user_choice = input("Which API do you wish to interact with:\n1. Lightning Stocks API,\n2. Lightning Weather API\n3 Lightning AI API: ")
+        user_choice = input("Which API do you wish to interact with:\n1. Lightning Stocks API,\n2. Lightning Weather API\n3. Lightning AI API: ")
 
         if user_choice == "1" or user_choice == "Lightning Stocks API" or user_choice == "Lightning Stocks" or user_choice == "Stocks":
             def LightningStockAPI():
@@ -134,27 +134,30 @@ try:
         elif user_choice == "3" or user_choice == "AI" or user_choice == "Lightning AI":
             def LightningAIAPI():
 
-                model = lightningai.GenerativeModel('gemini-pro', )
+                model = lightningai.GenerativeModel('gemini-pro')
                 lightningai.configure(api_key=os.getenv('GOOGLE_GENERATIVE_API_KEY'))
+
                 user_ask = input("Ask the ai something: ")
                 user_input = model.generate_content(user_ask)
-                extensions = ['py', 'js', 'html', 'css', 'java', 'php', 'cs', 'cpp', 'c', 'ts', 'swift', 'go', 'rs', 'kt', 'json', 'xml', 'sql', 'rb', 'css', 'sh', 'bat', 'pl', 'lua', 'r', 'dart', 'pas', 'h', 'hpp','swift', 'lua', 'php', 'py', 'r', 'rb', 'rs', 'scala', 'sql', 'swift', 'ts', 'xml', 'yaml']
-                #code_names = ['Python', 'JavaScript', 'HTML', 'CSS', 'Java', 'PHP', 'C#', 'C++', 'C', 'TypeScript', 'Swift', 'Go', 'Rust', 'Kotlin', 'JSON', 'XML', 'SQL', 'Ruby', 'CSS', 'Shell', 'Batch', 'Perl', 'Lua', 'R', 'Dart', 'Pascal', 'C Header', 'C++ Header', 'Swift', 'Lua', 'PHP', 'Python', 'R', 'Ruby', 'Rust', 'Scala', 'SQL', 'Swift', 'TypeScript', 'XML', 'YAML']
-                extension = user_ask.split()
-                getting_the_thing = []
-                if "code" or "program" or "script" or "" in user_ask:
-                    for exten in extension:
-                        if exten.lower() in extensions:
-                            getting_the_thing.append(exten.lower())
-                    random_number = choice(range(0, 32767))
-                    file_name = "aigenerated_" + str(random_number)
-                    file_extension = getting_the_thing[0]
-                    with open(f'{file_name}.{file_extension}', 'w') as code_file:
-                        code_file.write(user_input.text)
-                        print("Generated file: " + file_name + "." + file_extension)
+
+                # Improved check for specific keywords in user_ask
+                keywords = ["code", "program", "script"]
+                if any(keyword in user_ask for keyword in keywords) or not user_ask.strip():
+                    # Unique and cleaned up extensions list
+                    extensions = ['py', 'js', 'html', 'css', 'java', 'php', 'cs', 'cpp', 'c', 'ts', 'swift', 'go', 'rs', 'kt', 'json', 'xml', 'sql', 'rb', 'sh', 'bat', 'pl', 'lua', 'r', 'dart', 'pas', 'h', 'hpp', 'scala', 'yaml']
+                    extension = user_ask.split()
+                    getting_the_thing = [exten.lower() for exten in extension if exten.lower() in extensions]
+
+                    if getting_the_thing:
+                        random_number = choice(range(0, 32767))
+                        file_name = f"aigenerated_{random_number}"
+                        file_extension = getting_the_thing[0]
+                        with open(f'{file_name}.{file_extension}', 'w') as code_file:
+                            code_file.write(user_input.text)
+                            print("Generated file: " + file_name + "." + file_extension)
                 else:
                     if len(user_input.text) > 400:
-                        with open("ai_ouput.txt", "a") as ai_file:
+                        with open("ai_output.txt", "a") as ai_file:
                             ai_file.write(user_input.text + "-----------------------------\n")
                             print("Response too big, saved to ai_output.txt")
                     else:
