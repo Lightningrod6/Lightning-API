@@ -7,6 +7,7 @@ from datetime import datetime
 import calendar
 from google import generativeai as lightningai
 from random import choice
+import google
 
 
 
@@ -138,17 +139,30 @@ try:
                 user_ask = input("Ask the ai something: ")
                 user_input = model.generate_content(user_ask)
                 
-                keywords = ["code", "program", "script"]
+                keywords = ["code", "program", "script", "file"]
                 if any(keyword in user_ask for keyword in keywords) or not user_ask.strip():
-                    
-                    extensions = ['py', 'js', 'html', 'css', 'java', 'php', 'cs', 'cpp', 'c', 'ts', 'swift', 'go', 'rs', 'kt', 'json', 'xml', 'sql', 'rb', 'sh', 'bat', 'pl', 'lua', 'r', 'dart', 'pas', 'h', 'hpp', 'scala', 'yaml']
-                    extension = user_ask.split()
-                    getting_the_thing = [exten.lower() for exten in extension if exten.lower() in extensions]
+                    programming_languages = {
+                                                'Python': 'py',
+                                                'JavaScript': 'js',
+                                                'HTML': 'html',
+                                                'CSS': 'css',
+                                                'Java': 'java',
+                                                'PHP': 'php',
+                                                'C#': 'cs',
+                                                'C++': 'cpp',
+                                                'C': 'c',
+                                                'TypeScript': 'ts',
+                                                'Swift': 'swift',
+                                                'Lua' : 'lua'
+                                                # Add more languages and their extensions as needed
+                                            }
+                    getting_the_thing = [lang for lang, ext in programming_languages.items() if lang.lower() in user_ask.lower()]
 
                     if getting_the_thing:
                         random_number = choice(range(0, 32767))
                         file_name = f"aigenerated_{random_number}"
-                        file_extension = getting_the_thing[0]
+                        language = getting_the_thing[0]
+                        file_extension = programming_languages[language]
                         with open(f'{file_name}.{file_extension}', 'w') as code_file:
                             code_file.write(user_input.text)
                             print("Generated file: " + file_name + "." + file_extension)
