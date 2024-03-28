@@ -8,6 +8,7 @@ import calendar
 from google import generativeai as lightningai
 from random import choice
 import google
+import re
 
 
 
@@ -72,12 +73,6 @@ try:
                                 print(f"Price Change: ${price_change}")
                                 print(f"Todays High Price: ${high_price_today}")
                                 print(f"Todays Low Price: ${low_price_today}")
-
-                                generate_full_stock_report = input("Would you like a full stock report?")
-                                if generate_full_stock_report == ("yes").lower():
-                                    with open("Stock_report.txt", "w") as stock_file:
-                                        stock_file.write(f"Extended Stock Information for: {s_name}\n" + "Current Price: ${current_price}\n" + "Open Price: ${open_price}" + "\nPrice Change: ${price_change}\n" + "Todays High Price: ${high_price_today}\n" + "Todays Low Price: ${low_price_today}")
-                                        stock_file.write(f"")
                                     
                         else:
                             print("Failed to fetch stock")
@@ -144,47 +139,42 @@ try:
 
                 user_ask = input("Ask the ai something: ")
                 user_input = model.generate_content(user_ask)
-                print(user_input.prompt_feedback)
-                if 'block_reason: SAFETY' in user_input.prompt_feedback:
-                    print("Prompt was blocked")
-                else:
-                    keywords = ["code", "program", "script", "file"]
-                    if any(keyword in user_ask for keyword in keywords) or not user_ask.strip():
-                        programming_languages = {
-                                                    'Python': 'py',
-                                                    'JavaScript': 'js',
-                                                    'HTML': 'html',
-                                                    'CSS': 'css',
-                                                    'Java': 'java',
-                                                    'PHP': 'php',
-                                                    'C#': 'cs',
-                                                    'C++': 'cpp',
-                                                    'C': 'c',
-                                                    'TypeScript': 'ts',
-                                                    'Swift': 'swift',
-                                                    'Lua' : 'lua'
-                                                    # Add more languages and their extensions as needed
-                                                }
-                        getting_the_thing = [lang for lang, ext in programming_languages.items() if lang.lower() in user_ask.lower()]
+                remove_grave = user_input.text.replace("`", "")
+                
+                keywords = ["code", "program", "script", "file"]
+                if any(keyword in user_ask for keyword in keywords) or not remove_grave.strip():
+                    programming_languages = {
+                                                'Python': 'py',
+                                                'JavaScript': 'js',
+                                                'HTML': 'html',
+                                                'CSS': 'css',
+                                                'Java': 'java',
+                                                'PHP': 'php',
+                                                'C#': 'cs',
+                                                'C++': 'cpp',
+                                                'C': 'c',
+                                                'TypeScript': 'ts',
+                                                'Swift': 'swift',
+                                                'Lua' : 'lua'
+                                                # Add more languages and their extensions as needed
+                                            }
+                    getting_the_thing = [lang for lang, ext in programming_languages.items() if re.search(r'\b' + re.escape(lang.lower()) + r'\b', remove_grave.lower())]
 
-                        if getting_the_thing:
-                            random_number = choice(range(0, 32767))
-                            file_name = f"aigenerated_{random_number}"
-                            language = getting_the_thing[0]
-                            file_extension = programming_languages[language]
-                            with open(f'{file_name}.{file_extension}', 'w') as code_file:
-                                code_file.write(user_input.text)
-                                print("Generated file: " + file_name + "." + file_extension)
+                    if getting_the_thing:
+                        random_number = choice(range(0, 32767))
+                        file_name = f"aigenerated_{random_number}"
+                        language = getting_the_thing[0]
+                        file_extension = programming_languages[language]
+                        with open(f'{file_name}.{file_extension}', 'w') as code_file:
+                            code_file.write(remove_grave)
+                            print("Generated file: " + file_name + "." + file_extension)
+                else:
+                    if len(remove_grave) > 400:
+                        with open("ai_output.txt", "a") as ai_file:
+                            ai_file.write(remove_grave + "-----------------------------\n")
+                            print("Response too big, saved to ai_output.txt")
                     else:
-                        if len(user_input.text) > 400:
-                            print(user_input.prompt_feedback)
-                            
-                            with open("ai_output.txt", "a") as ai_file:
-                                ai_file.write(user_input.text + "-----------------------------\n")
-                                print("Response too big, saved to ai_output.txt")
-                        else:
-                            print(user_input.prompt_feedback)
-                            print(user_input.text)
+                        print(remove_grave)
             LightningAIAPI()
 except KeyboardInterrupt:
     print("\nExiting...")
