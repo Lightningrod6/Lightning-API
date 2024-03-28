@@ -88,7 +88,7 @@ try:
                 weather_input = input("Type in a location: ")
                 choices = input("Do you want the current weather, the 7 day forecast or hourly forecast? (1, 2 or 3)")
                 
-                if choices == "1" or choices == "Current" or choices == "Current weather":
+                if choices == "1" or "current" in choices.lower():
                     def GetCurrentWeather():
                         weather_url = "https://api.openweathermap.org/data/2.5/weather?q=" + weather_input + "&units=imperial&appid=" + openweathermapAPIKey
                     
@@ -107,7 +107,7 @@ try:
                             print("Current conditions: " + current_conditions)
                             print
                     GetCurrentWeather()
-                elif choices == "2" or choices == "7 Day" or choices == "7 Day Forecast":
+                elif choices == "2" or "7" or "day" in choices:
                     def Get7DayForecast():
 
                         seven_day_forecast_url = "https://api.openweathermap.org/data/2.5/forecast/daily?q=" + weather_input + "&units=imperial&cnt=7&appid=" + openweathermapAPIKey
